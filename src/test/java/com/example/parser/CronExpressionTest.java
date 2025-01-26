@@ -41,7 +41,42 @@ public class CronExpressionTest {
     }
 
     @Test
-    public void testEmptyCommand() {
-        assertThrows(IllegalArgumentException.class, () -> new CronExpression("*/5 * * * *"));
+    public void testEmptyField() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new CronExpression("  0  * * * /bin/script.sh");
+        });
+        assertEquals("Incomplete cron expression: Expected 6 fields, found 5", exception.getMessage());
     }
+
+    @Test
+    public void testEmptyCommand() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new CronExpression("0 0 * * * ");
+        });
+        assertEquals("Incomplete cron expression: Expected 6 fields, found 5", exception.getMessage());
+    }
+
+    @Test
+    public void testIncompleteExpression() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new CronExpression("0 0 * *");
+        });
+        assertEquals("Incomplete cron expression: Expected 6 fields, found 4", exception.getMessage());
+    }
+
+
+    @Test
+    public void testMalformedRange() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            new CronExpression("1--5 0 * * * /bin/script.sh");
+        });
+        assertEquals("Malformed range: 1--5", exception.getMessage());
+    }
+
+    @Test
+    public void testDeduplication() {
+        CronExpression cron = new CronExpression("1,1-3,2-4 0 * * * /bin/script.sh");
+        assertEquals("1 2 3 4", cron.getFields().get("minute"));
+    }
+
 }

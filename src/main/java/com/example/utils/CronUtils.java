@@ -2,6 +2,8 @@ package com.example.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class CronUtils {
 
@@ -9,7 +11,7 @@ public class CronUtils {
     private static final String INVALID_RANGE_END = "Invalid range end";
 
     public static String expandField(String field, int min, int max) {
-        List<Integer> values = new ArrayList<>();
+        Set<Integer> values = new TreeSet<>(); // Use TreeSet to deduplicate and sort values
 
         // Split by commas for lists (e.g., "1,15")
         String[] parts = field.split(",");
@@ -20,6 +22,9 @@ public class CronUtils {
                     values.add(i);
                 }
             } else if (part.contains("-")) {
+                if (part.startsWith("-") || part.endsWith("-") || part.indexOf('-') != part.lastIndexOf('-')) {
+                    throw new IllegalArgumentException("Malformed range: " + part);
+                }
                 // Expand range (e.g., "1-5")
                 String[] range = part.split("-");
                 int start = parseInt(range[0], INVALID_RANGE_START);

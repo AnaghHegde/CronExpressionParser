@@ -17,10 +17,12 @@ public class CronExpression {
     private final String command;
 
     public CronExpression(String cronExpression) {
-        String[] parts = cronExpression.split("\\s+", 6);
+        String normalized = cronExpression.trim().replaceAll("\\s+", " ");
+        String[] parts = normalized.split(" ", 6);
 
+        // Ensure all fields are present
         if (parts.length < 6) {
-            throw new IllegalArgumentException("Cron expression must have at least 6 parts.");
+            throw new IllegalArgumentException("Incomplete cron expression: Expected 6 fields, found " + parts.length);
         }
 
         fields.put("minute", CronFieldParser.parse(parts[0], new MinuteField()));
