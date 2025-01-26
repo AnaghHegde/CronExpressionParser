@@ -5,6 +5,9 @@ import java.util.List;
 
 public class CronUtils {
 
+    private static final String INVALID_RANGE_START = "Invalid range start";
+    private static final String INVALID_RANGE_END = "Invalid range end";
+
     public static String expandField(String field, int min, int max) {
         List<Integer> values = new ArrayList<>();
 
@@ -19,8 +22,8 @@ public class CronUtils {
             } else if (part.contains("-")) {
                 // Expand range (e.g., "1-5")
                 String[] range = part.split("-");
-                int start = parseInt(range[0], "Invalid range start");
-                int end = parseInt(range[1], "Invalid range end");
+                int start = parseInt(range[0], INVALID_RANGE_START);
+                int end = parseInt(range[1], INVALID_RANGE_END);
 
                 // Validate the range
                 validateRange(start, end, min, max);
@@ -34,8 +37,8 @@ public class CronUtils {
                 String rangePart = stepParts[0];
                 int step = parseInt(stepParts[1], "Invalid step value");
 
-                int start = rangePart.equals("*") ? min : parseInt(rangePart.split("-")[0], "Invalid range start");
-                int end = rangePart.equals("*") ? max : parseInt(rangePart.split("-")[1], "Invalid range end");
+                int start = rangePart.equals("*") ? min : parseInt(rangePart.split("-")[0], INVALID_RANGE_START);
+                int end = rangePart.equals("*") ? max : parseInt(rangePart.split("-")[1], INVALID_RANGE_END);
 
                 // Validate the range
                 validateRange(start, end, min, max);
